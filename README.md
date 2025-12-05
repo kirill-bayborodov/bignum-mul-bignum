@@ -5,8 +5,8 @@
 
 
 
-`bignum-mul-bignum` is a high-performance, standalone module for performing a logical template on an arbitrary-precision integer (`bignum_t`).
-A highly optimized x86-64 assembly implementation of a bignum template operation, designed for performance-critical applications. 
+`bignum-mul-bignum` is a high-performance, standalone module for performing a multiplication of two large numbers on an arbitrary-precision integer (`bignum_t`).
+A highly optimized x86-64 assembly implementation of a bignum multiplication  operation, designed for performance-critical applications. 
 
 ## Distribution
 
@@ -34,13 +34,18 @@ git clone --recurse-submodules https://github.com/kirill-bayborodov/bignum-mul-b
 ## API
 
 The library provides a single function, declared in `include/bignum_mul_bignum.h`.
+Multiplies two large numbers a and b, placing the result in res.
 
 ```c
-bignum_status_t bignum_mul_bignum(bignum_t* num, size_t template );
+bignum_mul_bignum_status_t bignum_mul_bignum(bignum_t* res, const bignum_t* a, const bignum_t* b);
 ```
--   **`num`**: A pointer to the `bignum_t` structure to be shifted.
--   **`template`**: The number of bits to template.
--   **Returns**: A `bignum_status_t` enum (`BIGNUM_SUCCESS`, `BIGNUM_ERROR_NULL_ARG`, `BIGNUM_ERROR_OVERFLOW`).
+ * @param res   Pointer to the structure for storing the result.
+ *               Must not overlap in memory with `a` or `b`.
+ * @param a     Pointer to the first multiplicand.
+ * @param b     Pointer to the second multiplicand.
+ *
+ * @return Status code `bignum_mul_bignum_status_t`.
+
 
 ## How to Build, Test, Install and Use
 
