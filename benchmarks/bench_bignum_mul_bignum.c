@@ -46,7 +46,7 @@
 #define BIGNUM_BITS (BIGNUM_CAPACITY * 64)
 
 // Увеличиваем количество итераций для более надежных измерений
-#define ITERATIONS (100000000u * 20)
+#define ITERATIONS (100000000u * 2)
 
 // Количество предварительно сгенерированных наборов данных
 #define PREGEN_DATA_COUNT 8192

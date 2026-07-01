@@ -1,8 +1,8 @@
 /**
  * @file    test_bignum_mul_bignum.c
  * @author  git@bayborodov.com
- * @version 1.0.0
- * @date    26.10.2025
+ * @version 1.0.4
+ * @date    30.06.2026
  *
  * @brief   Детерминированные тесты для модуля bignum_mul_bignum.
  *
@@ -12,6 +12,8 @@
  *                         сценарии из проверенной версии 0.0.1 для
  *                         обеспечения корректного регрессионного анализа.
  *                         Код представлен полностью, без сокращений.
+ *   - rev. 3 (30.06.2026): В функции test_multiply_by_zero нужно задать len = 0 для нулевого множителя и ожидаемого результата.
+ *   - rev. 4 (01.07.2026): Добавлен тест умножения 0 на 0
  */
 
 #include "bignum_mul_bignum.h"
@@ -32,16 +34,35 @@ void bignum_copy(bignum_t* dest, const bignum_t* src) {
     *dest = *src;
 }
 
+
 void test_multiply_by_zero() {
     printf("Running test: %s\n", __func__);
     bignum_t a = {.words = {123, 456}, .len = 2};
-    bignum_t b = {.words = {0}, .len = 1};
+    bignum_t b = {.words = {0}, .len = 0}; // Исправлено: len = 0
     bignum_t res = {0};
-    bignum_t expected = {.words = {0}, .len = 1};
+    bignum_t expected = {.words = {0}, .len = 0}; // Исправлено: len = 0
     assert(bignum_mul_bignum(&res, &a, &b) == BIGNUM_MUL_BIGNUM_SUCCESS);
     assert(bignum_are_equal(&res, &expected));
     printf("...PASSED\n");
 }
+
+void test_multiply_zero_by_zero() {
+    printf("Running test: %s\n", __func__);
+    
+    // Инициализируем оба множителя как нули (len = 0)
+    bignum_t a = {.words = {0}, .len = 0};
+    bignum_t b = {.words = {0}, .len = 0};
+    bignum_t res = {0};
+    
+    // Ожидаемый результат также должен быть нулем (len = 0)
+    bignum_t expected = {.words = {0}, .len = 0};
+    
+    assert(bignum_mul_bignum(&res, &a, &b) == BIGNUM_MUL_BIGNUM_SUCCESS);
+    assert(bignum_are_equal(&res, &expected));
+    
+    printf("...PASSED\n");
+}
+
 
 void test_multiply_by_one() {
     printf("Running test: %s\n", __func__);
@@ -123,14 +144,6 @@ void test_internal_zeros() {
     printf("...PASSED\n");
 }
 
-/*void test_overflow_multiplication() {
-    printf("Running test: %s\n", __func__);
-    bignum_t a = {.words = {1,1,1,1,1,1}, .len = 6};
-    bignum_t b = {.words = {1,1}, .len = 2};
-    bignum_t res = {0};
-    assert(bignum_mul_bignum(&res, &a, &b) == BIGNUM_MUL_ERROR_OVERFLOW);
-    printf("...PASSED\n");
-}*/
 
 void test_overflow_multiplication(void) {
     printf("Running test: %s\n", __func__);
@@ -156,6 +169,7 @@ void test_overflow_multiplication(void) {
 int main() {
     printf("\n--- Starting tests for bignum_mul_bignum ---\n");
     test_multiply_by_zero();
+    test_multiply_zero_by_zero();
     test_multiply_by_one();
     test_simple_multiplication();
     test_carry_multiplication();
