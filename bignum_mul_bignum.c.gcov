@@ -1,0 +1,62 @@
+        -:    0:Source:src/bignum_mul_bignum.c
+        -:    0:Graph:build/bignum_mul_bignum.gcno
+        -:    0:Data:build/bignum_mul_bignum.gcda
+        -:    0:Runs:5
+        -:    1:#include "bignum_mul_bignum.h"
+        -:    2:#include <string.h>
+        -:    3:
+function bignum_mul_bignum called 69170 returned 100% blocks executed 100%
+    69170:    4:bignum_mul_bignum_status_t bignum_mul_bignum(bignum_t *res, const bignum_t *a, const bignum_t *b)
+        -:    5:{
+    69170:    6:    bignum_t tmp = {0};
+    69170:    7:    if (res == NULL || a == NULL || b == NULL) return BIGNUM_MUL_BIGNUM_ERROR_NULL_ARG;
+branch  0 taken 69168 (fallthrough)
+branch  1 taken 2
+branch  2 taken 69167 (fallthrough)
+branch  3 taken 1
+    69167:    8:    if (a->len > BIGNUM_CAPACITY || b->len > BIGNUM_CAPACITY ||
+branch  0 taken 69167 (fallthrough)
+branch  1 taken 0
+branch  2 taken 69167 (fallthrough)
+branch  3 taken 0
+branch  4 taken 1309 (fallthrough)
+branch  5 taken 67858
+    67858:    9:        (a->len != 0U && b->len > BIGNUM_CAPACITY - a->len))
+branch  0 taken 67857
+branch  1 taken 1 (fallthrough)
+        -:   10:        return BIGNUM_MUL_BIGNUM_ERROR_OVERFLOW;
+   264280:   11:    for (size_t i = 0U; i < a->len; ++i) {
+branch  0 taken 195114
+branch  1 taken 69166 (fallthrough)
+        -:   12:        __uint128_t carry = 0U;
+  1065774:   13:        for (size_t j = 0U; j < b->len && i + j < BIGNUM_CAPACITY; ++j) {
+branch  0 taken 870660 (fallthrough)
+branch  1 taken 195114
+branch  2 taken 870660
+branch  3 taken 0 (fallthrough)
+   870660:   14:            __uint128_t sum = (__uint128_t)tmp.words[i + j] +
+   870660:   15:                (__uint128_t)a->words[i] * b->words[j] + carry;
+   870660:   16:            tmp.words[i + j] = (uint64_t)sum;
+   870660:   17:            carry = sum >> 64U;
+        -:   18:        }
+   195114:   19:        size_t k = i + b->len;
+   270476:   20:        while (carry != 0U && k < BIGNUM_CAPACITY) {
+branch  0 taken 75362
+branch  1 taken 195114 (fallthrough)
+    75362:   21:            __uint128_t sum = (__uint128_t)tmp.words[k] + carry;
+    75362:   22:            tmp.words[k++] = (uint64_t)sum;
+    75362:   23:            carry = sum >> 64U;
+        -:   24:        }
+   195114:   25:        if (carry != 0U) return BIGNUM_MUL_BIGNUM_ERROR_OVERFLOW;
+branch  0 taken 0
+branch  1 taken 195114 (fallthrough)
+        -:   26:    }
+        -:   27:    tmp.len = BIGNUM_CAPACITY;
+  1469427:   28:    while (tmp.len > 0U && tmp.words[tmp.len - 1U] == 0U) --tmp.len;
+branch  0 taken 1468285 (fallthrough)
+branch  1 taken 1142
+branch  2 taken 1400261
+branch  3 taken 68024 (fallthrough)
+    69166:   29:    *res = tmp;
+    69166:   30:    return BIGNUM_MUL_BIGNUM_SUCCESS;
+        -:   31:}
